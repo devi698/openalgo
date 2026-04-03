@@ -33,6 +33,33 @@ export interface CreateStrategyRequest {
   start_time?: string
   end_time?: string
   squareoff_time?: string
+  instrument?: string
+  expiry?: string
+  strike?: string
+  option_type?: 'CE' | 'PE'
+  order_type?: 'NRML' | 'MIS'
+  price_type?: 'Market' | 'Limit'
+  price?: string
+  lots?: number | string
+  split_qty?: number | string
+  tgt_points?: string
+  sl_type?: 'MTM' | 'Fixed'
+  sl_value?: string
+  tsl_points?: string
+  tsl_y?: string
+  lock_profit?: 'YES' | 'NO'
+  lock_profit_trigger?: string
+  lock_profit_min?: string
+  trail_profit?: 'YES' | 'NO'
+  trail_profit_step?: string
+  trail_profit_amount?: string
+  reentry?: 'YES' | 'NO'
+  max_reentries?: number | string
+  rollover?: string
+  rollover_day?: string
+  rollover_time?: string
+  max_daily_signals?: number | string
+  remarks?: string
 }
 
 export interface AddSymbolRequest {

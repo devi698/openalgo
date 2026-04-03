@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react'
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { Providers } from '@/app/providers'
 import { AuthSync } from '@/components/auth/AuthSync'
 import { FullWidthLayout } from '@/components/layout/FullWidthLayout'
@@ -131,128 +131,117 @@ const TrafficDashboard = lazy(() => import('@/pages/monitoring/TrafficDashboard'
 const LatencyDashboard = lazy(() => import('@/pages/monitoring/LatencyDashboard'))
 const HealthMonitor = lazy(() => import('@/pages/HealthMonitor'))
 
+function AppRoutes() {
+  const location = useLocation()
+
+  return (
+    <Routes>
+      {/* Public routes */}
+      <Route path="/" element={<Home />} />
+      <Route path="/faq" element={<Faq />} />
+      <Route path="/setup" element={<Setup />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/download" element={<Download />} />
+      <Route path="/error" element={<ServerError />} />
+      <Route path="/rate-limited" element={<RateLimited />} />
+
+      {/* Broker auth routes */}
+      <Route path="/broker" element={<BrokerSelect />} />
+      <Route path="/broker/:broker/totp" element={<BrokerTOTP />} />
+      <Route path="/broker/samco/auth" element={<SamcoAuth />} />
+      <Route path="/:broker/auth" element={<BrokerTOTP />} />
+
+      {/* Protected routes - requires broker auth */}
+      <Route element={<Layout />}>
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/positions" element={<Positions />} />
+        <Route path="/orderbook" element={<OrderBook />} />
+        <Route path="/tradebook" element={<TradeBook />} />
+        <Route path="/holdings" element={<HoldingsRoute />} />
+        <Route path="/search/token" element={<Token />} />
+        <Route path="/search" element={<Search />} />
+        <Route path="/apikey" element={<ApiKey />} />
+        <Route path="/platforms" element={<Platforms />} />
+        <Route path="/tradingview" element={<TradingView />} />
+        <Route path="/gocharting" element={<GoCharting />} />
+        <Route path="/pnl-tracker" element={<PnLTracker />} />
+        <Route path="/sandbox" element={<Sandbox />} />
+        <Route path="/sandbox/mypnl" element={<SandboxPnL />} />
+        <Route path="/analyzer" element={<Analyzer />} />
+        <Route path="/tools" element={<Tools />} />
+        <Route path="/optionchain" element={<OptionChain />} />
+        <Route path="/ivchart" element={<IVChart />} />
+        <Route path="/oitracker" element={<OITracker />} />
+        <Route path="/maxpain" element={<MaxPain />} />
+        <Route path="/straddle" element={<StraddleChart />} />
+        <Route path="/straddlepnl" element={<CustomStraddle />} />
+        <Route path="/volsurface" element={<VolSurface />} />
+        <Route path="/gex" element={<GEXDashboard />} />
+        <Route path="/ivsmile" element={<IVSmile />} />
+        <Route path="/oiprofile" element={<OIProfile />} />
+        <Route path="/websocket/test" element={<WebSocketTest />} />
+        <Route path="/websocket/test/20" element={<WebSocketTest depthLevel={20} />} />
+        <Route path="/websocket/test/30" element={<WebSocketTest depthLevel={30} />} />
+        <Route path="/websocket/test/50" element={<WebSocketTest depthLevel={50} />} />
+        <Route path="/strategy" element={<StrategyIndex />} />
+        <Route path="/strategy/new" element={<NewStrategy key={location.key} />} />
+        <Route path="/strategy/:strategyId" element={<ViewStrategy />} />
+        <Route path="/strategy/:strategyId/configure" element={<ConfigureSymbols />} />
+        <Route path="/python" element={<PythonStrategyIndex />} />
+        <Route path="/python/new" element={<NewPythonStrategy />} />
+        <Route path="/python/:strategyId/edit" element={<EditPythonStrategy />} />
+        <Route path="/python/:strategyId/logs" element={<PythonStrategyLogs />} />
+        <Route path="/python/:strategyId/schedule" element={<SchedulePythonStrategy />} />
+        <Route path="/python/guide" element={<PythonStrategyGuide />} />
+        <Route path="/chartink" element={<ChartinkIndex />} />
+        <Route path="/chartink/new" element={<NewChartinkStrategy />} />
+        <Route path="/chartink/:strategyId" element={<ViewChartinkStrategy />} />
+        <Route path="/chartink/:strategyId/configure" element={<ConfigureChartinkSymbols />} />
+        <Route path="/flow" element={<FlowIndex />} />
+        <Route path="/flow/shortcuts" element={<FlowKeyboardShortcuts />} />
+        <Route path="/leverage" element={<LeverageRoute />} />
+        <Route path="/admin" element={<AdminIndex />} />
+        <Route path="/admin/freeze" element={<FreezeQty />} />
+        <Route path="/admin/holidays" element={<Holidays />} />
+        <Route path="/admin/timings" element={<MarketTimings />} />
+        <Route path="/telegram" element={<TelegramIndex />} />
+        <Route path="/telegram/config" element={<TelegramConfig />} />
+        <Route path="/telegram/users" element={<TelegramUsers />} />
+        <Route path="/telegram/analytics" element={<TelegramAnalytics />} />
+        <Route path="/logs" element={<LogsIndex />} />
+        <Route path="/logs/live" element={<LiveLogs />} />
+        <Route path="/logs/sandbox" element={<Analyzer />} />
+        <Route path="/logs/security" element={<SecurityDashboard />} />
+        <Route path="/logs/traffic" element={<TrafficDashboard />} />
+        <Route path="/logs/latency" element={<LatencyDashboard />} />
+        <Route path="/health" element={<HealthMonitor />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/master-contract" element={<MasterContract />} />
+        <Route path="/action-center" element={<ActionCenter />} />
+      </Route>
+
+      <Route element={<FullWidthLayout />}>
+        <Route path="/playground" element={<Playground />} />
+        <Route path="/historify" element={<Historify />} />
+        <Route path="/historify/charts" element={<HistorifyCharts />} />
+        <Route path="/historify/charts/:symbol" element={<HistorifyCharts />} />
+        <Route path="/flow/editor/:id" element={<FlowEditor />} />
+      </Route>
+
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  )
+}
+
+
 function App() {
   return (
     <Providers>
       <BrowserRouter>
         <AuthSync>
           <Suspense fallback={<PageLoader />}>
-            <Routes>
-              {/* Public routes */}
-              <Route path="/" element={<Home />} />
-              <Route path="/faq" element={<Faq />} />
-              <Route path="/setup" element={<Setup />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="/download" element={<Download />} />
-              <Route path="/error" element={<ServerError />} />
-              <Route path="/rate-limited" element={<RateLimited />} />
-
-              {/* Broker auth routes */}
-              <Route path="/broker" element={<BrokerSelect />} />
-              <Route path="/broker/:broker/totp" element={<BrokerTOTP />} />
-              <Route path="/broker/samco/auth" element={<SamcoAuth />} />
-              {/* Dynamic broker TOTP routes for all supported brokers */}
-              <Route path="/:broker/auth" element={<BrokerTOTP />} />
-
-              {/* Protected routes - requires broker auth */}
-              <Route element={<Layout />}>
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/positions" element={<Positions />} />
-                <Route path="/orderbook" element={<OrderBook />} />
-                <Route path="/tradebook" element={<TradeBook />} />
-                <Route path="/holdings" element={<HoldingsRoute />} />
-                {/* Search routes - match Flask /search/* routes */}
-                <Route path="/search/token" element={<Token />} />
-                <Route path="/search" element={<Search />} />
-                {/* API Key management */}
-                <Route path="/apikey" element={<ApiKey />} />
-                {/* Phase 4: Charts & Webhook Configuration */}
-                <Route path="/platforms" element={<Platforms />} />
-                <Route path="/tradingview" element={<TradingView />} />
-                <Route path="/gocharting" element={<GoCharting />} />
-                <Route path="/pnl-tracker" element={<PnLTracker />} />
-                {/* Phase 4: Sandbox & Analyzer */}
-                <Route path="/sandbox" element={<Sandbox />} />
-                <Route path="/sandbox/mypnl" element={<SandboxPnL />} />
-                <Route path="/analyzer" element={<Analyzer />} />
-                <Route path="/tools" element={<Tools />} />
-                <Route path="/optionchain" element={<OptionChain />} />
-                <Route path="/ivchart" element={<IVChart />} />
-                <Route path="/oitracker" element={<OITracker />} />
-                <Route path="/maxpain" element={<MaxPain />} />
-                <Route path="/straddle" element={<StraddleChart />} />
-                <Route path="/straddlepnl" element={<CustomStraddle />} />
-                <Route path="/volsurface" element={<VolSurface />} />
-                <Route path="/gex" element={<GEXDashboard />} />
-                <Route path="/ivsmile" element={<IVSmile />} />
-                <Route path="/oiprofile" element={<OIProfile />} />
-                <Route path="/websocket/test" element={<WebSocketTest />} />
-                <Route path="/websocket/test/20" element={<WebSocketTest depthLevel={20} />} />
-                <Route path="/websocket/test/30" element={<WebSocketTest depthLevel={30} />} />
-                <Route path="/websocket/test/50" element={<WebSocketTest depthLevel={50} />} />
-                {/* Phase 6: Webhook Strategies */}
-                <Route path="/strategy" element={<StrategyIndex />} />
-                <Route path="/strategy/new" element={<NewStrategy />} />
-                <Route path="/strategy/:strategyId" element={<ViewStrategy />} />
-                <Route path="/strategy/:strategyId/configure" element={<ConfigureSymbols />} />
-                {/* Phase 6: Python Strategies */}
-                <Route path="/python" element={<PythonStrategyIndex />} />
-                <Route path="/python/new" element={<NewPythonStrategy />} />
-                <Route path="/python/:strategyId/edit" element={<EditPythonStrategy />} />
-                <Route path="/python/:strategyId/logs" element={<PythonStrategyLogs />} />
-                <Route path="/python/:strategyId/schedule" element={<SchedulePythonStrategy />} />
-                <Route path="/python/guide" element={<PythonStrategyGuide />} />
-                {/* Phase 6: Chartink Strategies */}
-                <Route path="/chartink" element={<ChartinkIndex />} />
-                <Route path="/chartink/new" element={<NewChartinkStrategy />} />
-                <Route path="/chartink/:strategyId" element={<ViewChartinkStrategy />} />
-                <Route
-                  path="/chartink/:strategyId/configure"
-                  element={<ConfigureChartinkSymbols />}
-                />
-                {/* Flow Editor */}
-                <Route path="/flow" element={<FlowIndex />} />
-                <Route path="/flow/shortcuts" element={<FlowKeyboardShortcuts />} />
-                {/* Leverage Configuration (crypto brokers only) */}
-                <Route path="/leverage" element={<LeverageRoute />} />
-                {/* Phase 7: Admin */}
-                <Route path="/admin" element={<AdminIndex />} />
-                <Route path="/admin/freeze" element={<FreezeQty />} />
-                <Route path="/admin/holidays" element={<Holidays />} />
-                <Route path="/admin/timings" element={<MarketTimings />} />
-                {/* Phase 7: Telegram */}
-                <Route path="/telegram" element={<TelegramIndex />} />
-                <Route path="/telegram/config" element={<TelegramConfig />} />
-                <Route path="/telegram/users" element={<TelegramUsers />} />
-                <Route path="/telegram/analytics" element={<TelegramAnalytics />} />
-                {/* Phase 7: Logs & Monitoring */}
-                <Route path="/logs" element={<LogsIndex />} />
-                <Route path="/logs/live" element={<LiveLogs />} />
-                <Route path="/logs/sandbox" element={<Analyzer />} />
-                <Route path="/logs/security" element={<SecurityDashboard />} />
-                <Route path="/logs/traffic" element={<TrafficDashboard />} />
-                <Route path="/logs/latency" element={<LatencyDashboard />} />
-                <Route path="/health" element={<HealthMonitor />} />
-                {/* Phase 7: Settings & Action Center */}
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/master-contract" element={<MasterContract />} />
-                <Route path="/action-center" element={<ActionCenter />} />
-              </Route>
-
-              {/* Full-width protected routes */}
-              <Route element={<FullWidthLayout />}>
-                <Route path="/playground" element={<Playground />} />
-                <Route path="/historify" element={<Historify />} />
-                <Route path="/historify/charts" element={<HistorifyCharts />} />
-                <Route path="/historify/charts/:symbol" element={<HistorifyCharts />} />
-                {/* Flow Editor (full-width for canvas) */}
-                <Route path="/flow/editor/:id" element={<FlowEditor />} />
-              </Route>
-
-              {/* 404 Not Found */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <AppRoutes />
           </Suspense>
         </AuthSync>
       </BrowserRouter>
