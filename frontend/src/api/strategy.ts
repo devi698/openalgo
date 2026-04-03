@@ -116,6 +116,14 @@ export const strategyApi = {
   },
 
   /**
+   * Get all available symbols
+   */
+  getSymbols: async (): Promise<string[]> => {
+    const response = await webClient.get<{ symbols: string[] }>('/strategy/api/symbols')
+    return response.data.symbols || []
+  },
+
+  /**
    * Get webhook URL for a strategy
    */
   getWebhookUrl: (webhookId: string): string => {

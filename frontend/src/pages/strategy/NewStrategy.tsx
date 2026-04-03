@@ -59,6 +59,7 @@ export default function NewStrategy() {
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({ ...defaultFormData })
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [symbols, setSymbols] = useState<string[]>([])
   const location = useLocation()
 
   useEffect(() => {
@@ -66,6 +67,18 @@ export default function NewStrategy() {
     setFormData({ ...defaultFormData })
     setErrors({})
   }, [location.pathname])
+
+  useEffect(() => {
+    const fetchSymbols = async () => {
+      try {
+        const syms = await strategyApi.getSymbols()
+        setSymbols(syms)
+      } catch (error) {
+        console.error('Failed to fetch symbols', error)
+      }
+    }
+    fetchSymbols()
+  }, [])
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
@@ -306,16 +319,25 @@ export default function NewStrategy() {
 
             {/* Strategy Orders */}
             <div className="space-y-4 p-4 border rounded-lg bg-muted/50">
-              <h4 className="font-medium">Entry Parameters (Optional)</h4>
+              <h4 className="font-medium">Entry Parameters</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="instrument">Instrument</Label>
-                  <Input
-                    id="instrument"
-                    placeholder="e.g., NIFTY"
+                  <Select
                     value={formData.instrument}
-                    onChange={(e) => setFormData({ ...formData, instrument: e.target.value })}
-                  />
+                    onValueChange={(value) => setFormData({ ...formData, instrument: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select instrument" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {symbols.map((symbol) => (
+                        <SelectItem key={symbol} value={symbol}>
+                          {symbol}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="expiry">Expiry</Label>
