@@ -687,11 +687,10 @@ def search_symbols():
 
 
 @strategy_bp.route("/api/symbols")
-@check_session_validity
 def api_get_symbols():
     """API: Get all available symbols"""
     from database.symbol import SymToken
-    symbols = SymToken.query.with_entities(SymToken.symbol).distinct().order_by(SymToken.symbol).limit(1000).all()
+    symbols = SymToken.query.with_entities(SymToken.symbol).distinct().order_by(SymToken.symbol).all()
     symbol_list = [s[0] for s in symbols]
     return jsonify({"symbols": symbol_list})
 
