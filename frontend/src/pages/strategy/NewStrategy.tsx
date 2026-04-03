@@ -72,9 +72,16 @@ export default function NewStrategy() {
     const fetchSymbols = async () => {
       try {
         const syms = await strategyApi.getSymbols()
-        setSymbols(syms)
+        if (syms.length > 0) {
+          setSymbols(syms)
+        } else {
+          // Fallback to default symbols if master contract not downloaded
+          setSymbols(['NIFTY', 'BANKNIFTY', 'FINNIFTY', 'SBIN', 'RELIANCE', 'TCS', 'INFY', 'HDFC', 'ICICIBANK', 'AXISBANK'])
+        }
       } catch (error) {
         console.error('Failed to fetch symbols', error)
+        // Fallback to default symbols on error
+        setSymbols(['NIFTY', 'BANKNIFTY', 'FINNIFTY', 'SBIN', 'RELIANCE', 'TCS', 'INFY', 'HDFC', 'ICICIBANK', 'AXISBANK'])
       }
     }
     fetchSymbols()
